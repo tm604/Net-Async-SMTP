@@ -10,6 +10,7 @@ use Future::Utils qw(try_repeat_until_success);
 sub port { shift->{port} }
 sub host { shift->{host} }
 sub domain { shift->{domain} }
+sub auth { shift->{auth} }
 
 =head2 connection
 
@@ -104,7 +105,8 @@ sub connected {
 	$self->{connected} ||= $self->connection->then(sub {
 		my $sock = shift;
 		my $stream = Net::Async::SMTP::Connection->new(
-			handle => $sock
+			handle => $sock,
+			auth => $self->auth,
 		);
 		$self->add_child($stream);
 		$stream->send_greeting->then(sub {

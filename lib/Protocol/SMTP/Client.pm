@@ -22,13 +22,21 @@ sub new {
 	$self
 }
 
+=head2 auth_mechanism_override
+
+Set this on instantiation to pick a specific auth method.
+
+=cut
+
+sub auth_mechanism_override { shift->{auth_mechanism_override} }
+
 sub login {
 	my $self = shift;
 	return $self->new_future->fail('no auth?') unless my @auth = $self->auth_methods;
 	my %args = @_;
 	my $auth_string = join ' ', @auth;
 	$self->debug_printf("Auth mechanisms [%s]", $auth_string);
-	$auth_string = 'PLAIN';
+	$auth_string = $self->auth_mechanism_override if $self->auth_mechanism_override;
 	my $f = $self->new_future;
 	$self->add_task(sub {
 		my $sasl = Authen::SASL->new(

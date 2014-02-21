@@ -21,6 +21,7 @@ warn "Will try to send this email:\n" . $email->as_string;
 my $loop = IO::Async::Loop->new;
 my $smtp = Net::Async::SMTP->new(
 	domain => $domain,
+	# auth => 'PLAIN',
 );
 $loop->add($smtp);
 

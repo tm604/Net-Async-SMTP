@@ -6,16 +6,25 @@ use parent qw(IO::Async::Stream);
 use IO::Socket::SSL qw(SSL_VERIFY_NONE);
 use Protocol::SMTP::Client;
 
+sub configure {
+	my $self = shift;
+	my %args = @_;
+	$self->{auth} = delete $args{auth} if exists $args{auth};
+	$self->SUPER::configure(%args)
+}
+
 sub _add_to_loop {
 	my ($self, $loop) = @_;
 	$self->{protocol} = Protocol::SMTP::Client->new(
 		future_factory => sub { $loop->new_future },
 		writer => sub { $self->write(@_) },
+		auth_mechanism_override => $self->auth,
 	);
 	$self->protocol->startup;
 	$self->SUPER::_add_to_loop($loop);
 }
 
+sub auth { shift->{auth} }
 sub protocol { shift->{protocol} }
 
 sub send_greeting {
