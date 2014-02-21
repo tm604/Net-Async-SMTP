@@ -27,6 +27,7 @@ sub login {
 	return $self->new_future->fail('no auth?') unless my @auth = $self->auth_methods;
 	my %args = @_;
 	my $auth_string = join ' ', @auth;
+	$self->debug_printf("Auth mechanisms [%s]", $auth_string);
 	$auth_string = 'PLAIN';
 	my $f = $self->new_future;
 	$self->add_task(sub {
