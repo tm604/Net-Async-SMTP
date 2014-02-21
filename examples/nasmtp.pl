@@ -5,6 +5,7 @@ use IO::Async::Loop;
 use Net::Async::SMTP;
 use Email::Simple;
 use Net::DNS;
+use IO::Socket::SSL qw(SSL_VERIFY_NONE);
 
 my $domain = 'perlsite.co.uk';
 my $user = 'nasmtp@perlsite.co.uk';
@@ -21,7 +22,8 @@ warn "Will try to send this email:\n" . $email->as_string;
 my $loop = IO::Async::Loop->new;
 my $smtp = Net::Async::SMTP->new(
 	domain => $domain,
-	# auth => 'PLAIN',
+	auth => 'PLAIN',
+	SSL_verify_mode => SSL_VERIFY_NONE,
 );
 $loop->add($smtp);
 
