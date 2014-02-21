@@ -195,11 +195,11 @@ sub send_mail {
 	# just yet.
 	my @mail = split /\x0D\x0A/, $args{data};
 
-	$self->write_line(q{MAIL FROM:} . $args{from} . ' BODY=' . $self->body_encoding);
+	$self->write_line(q{MAIL FROM:<} . $args{from} . '> BODY=' . $self->body_encoding);
 	$self->wait_for(250)
 	->then(sub {
 		fmap_void {
-			$self->write_line(q{RCPT TO:} . shift);
+			$self->write_line(q{RCPT TO:<} . shift . q{>});
 			$self->wait_for(250)
 		} foreach => \@recipient;
 	})->then(sub {
