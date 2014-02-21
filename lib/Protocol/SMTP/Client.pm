@@ -98,16 +98,7 @@ sub send {
 	$self->add_task(sub {
 		$self->send_mail(
 			%args
-		)->on_done(sub {
-			$f->done;
-			undef $f
-		})->on_fail(sub {
-			$f->fail(@_);
-			undef $f;
-		})->on_cancel(sub {
-			$f->cancel(@_);
-			undef $f;
-		})
+		)->on_ready($f);
 	});
 	$f
 }
