@@ -121,7 +121,13 @@ sub new_future {
 	$factory ? $factory->() : Future->new;
 }
 
-sub debug_printf { }
+sub debug_printf {
+	return unless $ENV{'PERL_SMTP_DEBUG'};
+	my $self = shift;
+	my $fmt = shift;
+	printf "$fmt\n", @_;
+	return;
+}
 
 =head2 write
 
