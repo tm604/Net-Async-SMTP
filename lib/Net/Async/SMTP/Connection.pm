@@ -35,6 +35,7 @@ sub send_greeting {
 
 sub starttls {
 	my $self = shift;
+	my %args = @_;
 	$self->debug_printf("STARTTLS");
 	die "This server does not support TLS" unless $self->has_feature('STARTTLS');
 
@@ -42,7 +43,8 @@ sub starttls {
 	$self->protocol->starttls->then(sub {
 		$self->loop->SSL_upgrade(
 			handle => $self,
-			SSL_verify_mode => SSL_VERIFY_NONE,
+			# SSL_verify_mode => SSL_VERIFY_NONE,
+			%args,
 		)->on_done(sub {
 			$self->debug_printf("STARTTLS successful");
 		})

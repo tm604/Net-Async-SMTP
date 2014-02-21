@@ -91,6 +91,8 @@ sub configure {
 	for(grep exists $args{$_}, qw(host user pass auth domain)) {
 		$self->{$_} = delete $args{$_};
 	}
+	# SSL support
+	$self->{$_} = delete $args{$_} for grep /^SSL_/, keys %args;
 	$self->SUPER::configure(%args);
 }
 
@@ -113,9 +115,16 @@ sub connected {
 			return Future->wrap($stream) unless $stream->has_feature('STARTTLS');
 			# Currently need to have this loaded to find ->sslwrite
 			require IO::Async::SSLStream;
-			$stream->starttls 
+			$stream->starttls(
+				$self->ssl_parameters
+			)
 		});
 	});
+}
+
+sub ssl_parameters {
+	my $self = shift;
+	map { $_, $self->{$_} } grep /^SSL_/, keys %$self;
 }
 
 sub login {
